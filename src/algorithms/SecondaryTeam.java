@@ -27,7 +27,7 @@ public class SecondaryTeam extends Brain {
 	private static final double SAFE_DISTANCE = teamBSecondaryBotRadius * 12;
 	private static final double HEADINGPRECISION = 0.001;
 
-	
+
 	private static final double ANGLEPRECISION = 0.1;
 	// Liste des noms stylés inspirés du monde du gaming
 	private static final List<String> availableNames = List.of("Shadow", "Phoenix", "Vortex", "Titan", "Nova", "Blitz",
@@ -36,8 +36,8 @@ public class SecondaryTeam extends Brain {
 	private enum State {
 		SCOUT, REPORT, EVADE, DISTRACT, REGROUP, RETREAT, DECIDE_AVOIDANCE, AVOID_WALL, MOVE_AWAY
 	}
-	
-	
+
+
 
 	private double lastEnemyX = -1;
 	private double lastEnemyY = -1;
@@ -91,34 +91,34 @@ public class SecondaryTeam extends Brain {
 
 	@Override
 	public void step() {
-		chooseSafeDirection(); 
+		chooseSafeDirection();
 		if(regroupe) {
 			regroupe = false;
 			state = state.REGROUP;
 		}
 		sendLogMessage(myName+" "+state+" "+(state == State.AVOID_WALL));
 		switch (state) {
-		case SCOUT:
-			handleScout();
-			break;
-		case REPORT:
-			handleReport();
-			break;
-		case EVADE:
-			handleEvade();
-			break;
-		case DISTRACT:
-			handleDistract();
-			break;
-		case REGROUP:
-			handleRegroup();
-			break;
-		case AVOID_WALL:
-	        handleAvoidWall();
-	        break;	
-		case RETREAT:
-			handleRetreat();
-			break;
+			case SCOUT:
+				handleScout();
+				break;
+			case REPORT:
+				handleReport();
+				break;
+			case EVADE:
+				handleEvade();
+				break;
+			case DISTRACT:
+				handleDistract();
+				break;
+			case REGROUP:
+				handleRegroup();
+				break;
+			case AVOID_WALL:
+				handleAvoidWall();
+				break;
+			case RETREAT:
+				handleRetreat();
+				break;
 		}
 	}
 
@@ -185,22 +185,22 @@ public class SecondaryTeam extends Brain {
 	}
 
 	private void handleReport() {
-		  // Assurez-vous que myTarget est défini par une autre méthode après avoir détecté un ennemi
-		  if (myTarget != null) {
-		    // Préparer le message à envoyer
-		    String message = String.format(
-		      "Enemy spotted at x: %f, y: %f, heading: %f",
-		      myX, myY, myHeading
-		    );
+		// Assurez-vous que myTarget est défini par une autre méthode après avoir détecté un ennemi
+		if (myTarget != null) {
+			// Préparer le message à envoyer
+			String message = String.format(
+					"Enemy spotted at x: %f, y: %f, heading: %f",
+					myX, myY, myHeading
+			);
 
-		    // Envoyer le message aux MainBots
-		    broadcast(message);
+			// Envoyer le message aux MainBots
+			broadcast(message);
 
-		    // Après avoir signalé la position de l'ennemi, décider de l'action suivante
-		    // Peut-être retourner en mode SCOUT ou passer en EVADE si le robot est en danger
-		    state = State.EVADE; // ou State.EVADE si le robot doit esquiver des tirs ennemis
-		  }
+			// Après avoir signalé la position de l'ennemi, décider de l'action suivante
+			// Peut-être retourner en mode SCOUT ou passer en EVADE si le robot est en danger
+			state = State.EVADE; // ou State.EVADE si le robot doit esquiver des tirs ennemis
 		}
+	}
 
 	private void handleEvade() {
 		for (IRadarResult radar : detectRadar()) {
@@ -235,7 +235,7 @@ public class SecondaryTeam extends Brain {
 			enemyPositions.add(enemyPosition);
 		}
 	}
-	
+
 	private void decideAvoidance() {
 		double enemyBearingFromNorth = calculateBearingFromNorth(lastEnemyBearing);
 		// Déterminer les zones cardinales
@@ -349,57 +349,57 @@ public class SecondaryTeam extends Brain {
 	}
 
 	private void handleRegroup() {
-	    double targetX = lastEnemyX; // Coordonnée X du point de rendez-vous
-	    double targetY = lastEnemyY; // Coordonnée Y du point de rendez-vous
-	    lastEnemyX = -1; lastEnemyY = -1;
-	    // Calculer l'angle de déplacement requis pour se diriger vers le point de rendez-vous
-	    double angleToTarget = Math.atan2(targetY - myY, targetX - myX);
+		double targetX = lastEnemyX; // Coordonnée X du point de rendez-vous
+		double targetY = lastEnemyY; // Coordonnée Y du point de rendez-vous
+		lastEnemyX = -1; lastEnemyY = -1;
+		// Calculer l'angle de déplacement requis pour se diriger vers le point de rendez-vous
+		double angleToTarget = Math.atan2(targetY - myY, targetX - myX);
 
-	    // S'assurer que le robot est orienté dans la bonne direction avant de se déplacer
-	    adjustHeadingTowards(angleToTarget);
+		// S'assurer que le robot est orienté dans la bonne direction avant de se déplacer
+		adjustHeadingTowards(angleToTarget);
 
-	    // Détection par radar pour les obstacles et ennemis
-	    ArrayList<IRadarResult> radarResults = detectRadar();
-	    for (IRadarResult radarResult : radarResults) {
-	        if (radarResult.getObjectType() == IRadarResult.Types.OpponentMainBot ||
-	            radarResult.getObjectType() == IRadarResult.Types.OpponentSecondaryBot) {
-	            // Un ennemi est détecté; passer en REPORT
-	            state = State.REPORT;
-	            return;
-	        }
-	    }
+		// Détection par radar pour les obstacles et ennemis
+		ArrayList<IRadarResult> radarResults = detectRadar();
+		for (IRadarResult radarResult : radarResults) {
+			if (radarResult.getObjectType() == IRadarResult.Types.OpponentMainBot ||
+					radarResult.getObjectType() == IRadarResult.Types.OpponentSecondaryBot) {
+				// Un ennemi est détecté; passer en REPORT
+				state = State.REPORT;
+				return;
+			}
+		}
 
-	    // Détection frontale pour gérer les murs et les obstacles immédiats
-	    IFrontSensorResult frontResult = detectFront();
-	    if (frontResult.getObjectType() == IFrontSensorResult.Types.WALL ||
-	        frontResult.getObjectType() == IFrontSensorResult.Types.Wreck ||
-	        frontResult.getObjectType() == IFrontSensorResult.Types.TeamMainBot ||
-	        frontResult.getObjectType() == IFrontSensorResult.Types.TeamSecondaryBot) {
-	        // Gérer la détection d'un obstacle en tournant légèrement pour l'éviter
-	        stepTurn(Parameters.Direction.LEFT); // Choix arbitraire, pourrait être ajusté selon la situation
-	    } else {
-	        // Aucun obstacle immédiat; avancer vers le point de rendez-vous
-	        myMove();
-	    }
+		// Détection frontale pour gérer les murs et les obstacles immédiats
+		IFrontSensorResult frontResult = detectFront();
+		if (frontResult.getObjectType() == IFrontSensorResult.Types.WALL ||
+				frontResult.getObjectType() == IFrontSensorResult.Types.Wreck ||
+				frontResult.getObjectType() == IFrontSensorResult.Types.TeamMainBot ||
+				frontResult.getObjectType() == IFrontSensorResult.Types.TeamSecondaryBot) {
+			// Gérer la détection d'un obstacle en tournant légèrement pour l'éviter
+			stepTurn(Parameters.Direction.LEFT); // Choix arbitraire, pourrait être ajusté selon la situation
+		} else {
+			// Aucun obstacle immédiat; avancer vers le point de rendez-vous
+			myMove();
+		}
 
-	    // Vérifier si le robot a atteint le point de rendez-vous
-	    if (isAtRegroupPoint(targetX, targetY)) {
-	        state = State.SCOUT; // Arrivé au point de rendez-vous, retourner en mode SCOUT
-	    }
+		// Vérifier si le robot a atteint le point de rendez-vous
+		if (isAtRegroupPoint(targetX, targetY)) {
+			state = State.SCOUT; // Arrivé au point de rendez-vous, retourner en mode SCOUT
+		}
 	}
 
 	private void adjustHeadingTowards(double targetDirection) {
-	    double currentHeading = myGetHeading();
-	    double angleDifference = normalizeAngle(targetDirection - currentHeading);
+		double currentHeading = myGetHeading();
+		double angleDifference = normalizeAngle(targetDirection - currentHeading);
 
-	    if (Math.abs(angleDifference) > HEADINGPRECISION) {
-	        Parameters.Direction turnDirection = angleDifference > 0 ? Parameters.Direction.RIGHT : Parameters.Direction.LEFT;
-	        stepTurn(turnDirection);
-	    }
+		if (Math.abs(angleDifference) > HEADINGPRECISION) {
+			Parameters.Direction turnDirection = angleDifference > 0 ? Parameters.Direction.RIGHT : Parameters.Direction.LEFT;
+			stepTurn(turnDirection);
+		}
 	}
 
 	private boolean isAtRegroupPoint(double targetX, double targetY) {
-	    return Math.hypot(targetX - myX, targetY - myY) < Parameters.teamASecondaryBotSpeed; // Distance moins que un pas
+		return Math.hypot(targetX - myX, targetY - myY) < Parameters.teamASecondaryBotSpeed; // Distance moins que un pas
 	}
 
 
@@ -417,42 +417,42 @@ public class SecondaryTeam extends Brain {
 			// Analyser les résultats et prendre des décisions
 		}
 	}
-	
+
 	private void handleAvoidWall() {
-	    IFrontSensorResult frontResult = detectFront();
-	    if (frontResult.getObjectType() == IFrontSensorResult.Types.WALL) {
-	        // Déterminer la direction de rotation basée sur l'orientation actuelle du robot
-	    	decideDirectionToAvoidWall();
-	    } else {
-	        // Si aucun mur n'est détecté devant, continuer à avancer
-	        myMove();
-	        state = State.SCOUT;
-	    }
+		IFrontSensorResult frontResult = detectFront();
+		if (frontResult.getObjectType() == IFrontSensorResult.Types.WALL) {
+			// Déterminer la direction de rotation basée sur l'orientation actuelle du robot
+			decideDirectionToAvoidWall();
+		} else {
+			// Si aucun mur n'est détecté devant, continuer à avancer
+			myMove();
+			state = State.SCOUT;
+		}
 	}
 
 	private void decideDirectionToAvoidWall() {
-	    // Utilisez l'orientation actuelle du robot pour décider si tourner à droite ou à gauche
-	    double heading = getHeading();
-	    
-	    if (heading >= Parameters.NORTH && heading < Parameters.EAST) {
-	        // Si le robot est orienté vers le nord, tournez à gauche pour éviter le mur
-	        stepTurn(Parameters.Direction.LEFT);
-	    } else if (heading >= Parameters.EAST && heading < Parameters.SOUTH) {
-	        // Si le robot est orienté vers l'est, tournez à gauche aussi
-	        stepTurn(Parameters.Direction.LEFT);
-	    } else if (heading >= Parameters.SOUTH && heading < Parameters.WEST) {
-	        // Si le robot est orienté vers le sud, tournez à droite pour éviter le mur
-	        stepTurn(Parameters.Direction.RIGHT);
-	    } else {
-	        // Si le robot est orienté vers l'ouest, tournez à droite aussi
-	        stepTurn(Parameters.Direction.RIGHT);
-	    }
-	    
-	    state = State.SCOUT; // Changez l'état pour exécuter le mouvement d'évitement au prochain step
+		// Utilisez l'orientation actuelle du robot pour décider si tourner à droite ou à gauche
+		double heading = getHeading();
+
+		if (heading >= Parameters.NORTH && heading < Parameters.EAST) {
+			// Si le robot est orienté vers le nord, tournez à gauche pour éviter le mur
+			stepTurn(Parameters.Direction.LEFT);
+		} else if (heading >= Parameters.EAST && heading < Parameters.SOUTH) {
+			// Si le robot est orienté vers l'est, tournez à gauche aussi
+			stepTurn(Parameters.Direction.LEFT);
+		} else if (heading >= Parameters.SOUTH && heading < Parameters.WEST) {
+			// Si le robot est orienté vers le sud, tournez à droite pour éviter le mur
+			stepTurn(Parameters.Direction.RIGHT);
+		} else {
+			// Si le robot est orienté vers l'ouest, tournez à droite aussi
+			stepTurn(Parameters.Direction.RIGHT);
+		}
+
+		state = State.SCOUT; // Changez l'état pour exécuter le mouvement d'évitement au prochain step
 	}
 	private boolean isHeadingTowards(double direction) {
-	    double heading = getHeading();
-	    return Math.abs(heading - direction) < HEADINGPRECISION;
+		double heading = getHeading();
+		return Math.abs(heading - direction) < HEADINGPRECISION;
 	}
 
 
