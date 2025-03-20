@@ -1,9 +1,4 @@
-/* ******************************************************
- * Simovies - Eurobot 2015 Robomovies Simulator.
- * Copyright (C) 2014 <Binh-Minh.Bui-Xuan@ens-lyon.org>.
- * GPL version>=3 <http://www.gnu.org/licenses/>.
- * $Id: algorithms/Stage1.java 2014-10-18 buixuan.
- * ******************************************************/
+
 package algorithms;
 
 import robotsimulator.Brain;
