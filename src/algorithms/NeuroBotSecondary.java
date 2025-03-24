@@ -2,11 +2,10 @@ package algorithms;
 
 import robotsimulator.Brain;
 import characteristics.Parameters;
-import characteristics.IFrontSensorResult;
 import characteristics.IRadarResult;
 import java.util.ArrayList;
 
-public class Secondary extends Brain {
+public class NeuroBotSecondary extends Brain {
     // --- CONSTANTES ---
     private static final double ANGLEPRECISION = 0.01;
 
@@ -103,7 +102,7 @@ public class Secondary extends Brain {
     private boolean isTeamA;  // true = Team A Secondary, false = Team B Secondary
 
     // --- CONSTRUCTEUR ---
-    public Secondary() {
+    public NeuroBotSecondary() {
         super();
     }
 
@@ -126,12 +125,12 @@ public class Secondary extends Brain {
         String paramA = Parameters.teamASecondaryBotBrainClassName;
         String paramB = Parameters.teamBSecondaryBotBrainClassName;
 
-        if (paramA.equals("algorithms.Secondary")) {
+        if (paramA.equals("algorithms.NeuroBotSecondary")) {
             // Si paramA vaut "algorithms.Main", alors c'est Team A
             isTeamA = true;
             System.out.println("Je suis secondary A ");
             sendLogMessage("paramA = " + paramA + " donc Team A");
-        } else if (paramB.equals("algorithms.Secondary")) {
+        } else if (paramB.equals("algorithms.NeuroBotSecondary")) {
             System.out.println("Je suis secondary B ");
             // Sinon, si paramB vaut "algorithms.Main", c'est Team B
             isTeamA = false;
@@ -225,9 +224,9 @@ public class Secondary extends Brain {
 
         // DEBUG MESSAGE
         if (whoAmI == ROCKY)
-            sendLogMessage("#ROCKY : (" + (int) myX + ", " + (int) myY + ")  State= " + state);
+            sendLogMessage("#ROCKY : (" + (int) myX + ", " + (int) myY + ")");
         else
-            sendLogMessage("#MARIO : (" + (int) myX + ", " + (int) myY + ")  State= " + state);
+            sendLogMessage("#MARIO : (" + (int) myX + ", " + (int) myY + ")");
 
         // COMMUNICATION
         broadcast(whoAmI + "/" + TEAM + "/" + COMM + "/" + state + "/" + myX + "/" + myY + "/" + OVER);
@@ -253,16 +252,13 @@ public class Secondary extends Brain {
                 }
 
                 if (Is_Fifth_Element && whoAmI == ROCKY && ((int) enemyY <= 795 || (int) enemyY >= 805)) {
-//					System.out.println("\n\n\n RRRRRRRRRR "+enemyX+","+enemyY+"\n\n\n");
                     broadcast(whoAmI + "/" + TEAM + "/" + NOT_FIFTH_ELEMENT + "/" + OVER);
                 }
                 if (Is_Fifth_Element && whoAmI == MARIO && ((int) enemyY <= 1195 || (int) enemyY >= 1205)) {
-//					System.out.println("\\n\\n\\n MMMMMMMMMM "+enemyX+","+enemyY+"\\n\\n\\n");
                     broadcast(whoAmI + "/" + TEAM + "/" + NOT_FIFTH_ELEMENT + "/" + OVER);
                 }
-//				System.out.println(whoAmI + "/(" + myX + "," + myY + ")/" + enemyX + "/" + enemyY + "/" + OVER);
             }
-            if (o.getObjectDistance() <= 100) { // TODO : if <=300 move back
+            if (o.getObjectDistance() <= 100) {
                 freeze = true;
             }
 
@@ -306,15 +302,8 @@ public class Secondary extends Brain {
         }
         if (freeze)
             return;
-
-
-
-
-
         goPlaces();
-
         bypassWreck_teamA();
-
         if (state == TURN_EAST_TASK && !(isSameDirection(getHeading(), Parameters.EAST))) {
             if (whoAmI==ROCKY)
                 stepTurn(Parameters.Direction.RIGHT);
@@ -365,16 +354,10 @@ public class Secondary extends Brain {
             myMoveBack();
             return;
         }
-
-
-
-
-
         if (true) {
             return;
         }
     }
-
     // --- Step pour Team B Secondary ---
     public void stepTeamB() {
         // ODOMETRY CODE
@@ -392,9 +375,9 @@ public class Secondary extends Brain {
 
         // DEBUG MESSAGE
         if (whoAmI == ROCKY)
-            sendLogMessage("#ROCKY : (" + (int) myX + ", " + (int) myY + ")  State= " + state);
+            sendLogMessage("#ROCKY : (" + (int) myX + ", " + (int) myY + ")");
         else
-            sendLogMessage("#MARIO : (" + (int) myX + ", " + (int) myY + ")  State= " + state);
+            sendLogMessage("#MARIO : (" + (int) myX + ", " + (int) myY + ")");
 
         // COMMUNICATION
         broadcast(whoAmI + "/" + TEAM + "/" + COMM + "/" + state + "/" + myX + "/" + myY + "/" + OVER);
@@ -420,14 +403,11 @@ public class Secondary extends Brain {
                 }
 
                 if (Is_Fifth_Element && whoAmI == ROCKY && ((int) enemyY <= 795 || (int) enemyY >= 805)) {
-//					System.out.println("\n\n\n RRRRRRRRRR "+enemyX+","+enemyY+"\n\n\n");
                     broadcast(whoAmI + "/" + TEAM + "/" + NOT_FIFTH_ELEMENT + "/" + OVER);
                 }
                 if (Is_Fifth_Element && whoAmI == MARIO && ((int) enemyY <= 1195 || (int) enemyY >= 1205)) {
-//					System.out.println("\\n\\n\\n MMMMMMMMMM "+enemyX+","+enemyY+"\\n\\n\\n");
                     broadcast(whoAmI + "/" + TEAM + "/" + NOT_FIFTH_ELEMENT + "/" + OVER);
                 }
-//				System.out.println(whoAmI + "/(" + myX + "," + myY + ")/" + enemyX + "/" + enemyY + "/" + OVER);
             }
             if (o.getObjectDistance() <= 100) { // TODO : if <=300 move back
                 freeze = true;
@@ -453,20 +433,16 @@ public class Secondary extends Brain {
                     if (state == MOVE_TASK) {
                         if (dist <= 150 && wreckY >= myY - 100 && wreckY <= myY + 100 && wreckX<=myX) {
                             if (wreckY >= myY) {
-//								state = TURN_NORTH_TO_BYBASS_EAST_TASK_1;
                                 state = TURN_NORTH_TO_BYBASS_WEST_TASK_1;
                             } else {
-//								state = TURN_SOUTH_TO_BYBASS_EAST_TASK_1;
                                 state = TURN_SOUTH_TO_BYBASS_WEST_TASK_1;
                             }
                         }
                     } else if (state == MOVE_BACK_TASK) {
                         if (dist <= 150 && wreckY >= myY - 100 && wreckY <= myY + 100 && wreckX>myX) {
                             if (wreckY >= myY) {
-//								state = TURN_NORTH_TO_BYBASS_WEST_TASK_1;
                                 state = TURN_NORTH_TO_BYBASS_EAST_TASK_1;
                             } else {
-//								state = TURN_SOUTH_TO_BYBASS_WEST_TASK_1;
                                 state = TURN_SOUTH_TO_BYBASS_EAST_TASK_1;
                             }
                         }
@@ -529,16 +505,10 @@ public class Secondary extends Brain {
             myMoveBack();
             return;
         }
-
-
-
-
-
         if (true) {
             return;
         }
     }
-
     // --- Méthodes utilitaires ---
     public double getCurrentX() {
         return myX;
@@ -593,11 +563,9 @@ public class Secondary extends Brain {
             Is_Fifth_Element = false;
         }
     }
-
     private int distance(double x, double y, double x1, double y1) {
         return (int) Math.sqrt(Math.abs((x - x1) * (x - x1) + (y - y1) * (y - y1)));
     }
-
     private void goPlaces() {
         if (isTeamA) {
             goPlacesteamA();
@@ -718,7 +686,6 @@ public class Secondary extends Brain {
         bypassWreck_N_W_teamA();
         bypassWreck_S_W_teamA();
     }
-
     private void bypassWreck_N_E_teamA() {
         if (state == TURN_NORTH_TO_BYBASS_EAST_TASK_1 && !isSameDirection(getHeading(), Parameters.NORTH)) {
             stepTurn(Parameters.Direction.LEFT);
@@ -786,7 +753,6 @@ public class Secondary extends Brain {
             return;
         }
     }
-
     private void bypassWreck_S_E_teamA() {
         if (state == TURN_SOUTH_TO_BYBASS_EAST_TASK_1 && !isSameDirection(getHeading(), Parameters.SOUTH)) {
             stepTurn(Parameters.Direction.RIGHT);
@@ -990,7 +956,6 @@ public class Secondary extends Brain {
             return;
         }
     }
-
     // --- Bypass methods pour Secondary Team B ---
     private void bypassWreck_teamB() {
         bypassWreck_N_E_teamB();
@@ -998,7 +963,6 @@ public class Secondary extends Brain {
         bypassWreck_N_W_teamB();
         bypassWreck_S_W_teamB();
     }
-
     private void bypassWreck_N_E_teamB() {
         if (state == TURN_NORTH_TO_BYBASS_EAST_TASK_1 && !isSameDirection(getHeading(), Parameters.NORTH)) {
             stepTurn(Parameters.Direction.RIGHT);
@@ -1270,5 +1234,4 @@ public class Secondary extends Brain {
             return;
         }
     }
-
 }

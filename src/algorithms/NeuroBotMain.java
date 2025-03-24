@@ -6,7 +6,7 @@ import characteristics.IFrontSensorResult;
 import characteristics.IRadarResult;
 import java.util.ArrayList;
 
-public class Main extends Brain {
+public class NeuroBotMain extends Brain {
     // --- CONSTANTES COMMUNES ---
     private static final double ANGLEPRECISION = 0.01;
     private static final double FIREANGLEPRECISION = Math.PI / 6;
@@ -118,7 +118,7 @@ public class Main extends Brain {
     private boolean isTeamA; // true si Team A, false sinon
 
     // --- CONSTRUCTEUR ---
-    public Main() {
+    public NeuroBotMain() {
         super();
     }
 
@@ -255,20 +255,16 @@ public class Main extends Brain {
                     if (state == MOVE_AND_FIRE_TASK) {
                         if (dist < 150 && wreckY >= myY - 100 && wreckY <= myY + 100 && wreckX<=myX) {
                             if (wreckY >= myY) {
-//								state = TURN_NORTH_TO_BYBASS_EAST_TASK_1;
                                 state = TURN_NORTH_TO_BYBASS_WEST_TASK_1;
                             } else {
-//								state = TURN_SOUTH_TO_BYBASS_EAST_TASK_1;
                                 state = TURN_SOUTH_TO_BYBASS_WEST_TASK_1;
                             }
                         }
                     } else if (state == MOVE_BACK_AND_FIRE_TASK) {
                         if (dist < 150 && wreckY >= myY - 100 && wreckY <= myY + 100 && wreckX>myX) {
                             if (wreckY >= myY) {
-//								state = TURN_NORTH_TO_BYBASS_WEST_TASK_1;
                                 state = TURN_NORTH_TO_BYBASS_EAST_TASK_1;
                             } else {
-//								state = TURN_SOUTH_TO_BYBASS_WEST_TASK_1;
                                 state = TURN_SOUTH_TO_BYBASS_EAST_TASK_1;
                             }
                         }
@@ -301,7 +297,6 @@ public class Main extends Brain {
                 double enemyX = myX + o.getObjectDistance() * Math.cos(o.getObjectDirection());
                 double enemyY = myY + o.getObjectDistance() * Math.sin(o.getObjectDirection());
                 broadcast(whoAmI + "/" + TEAM + "/" + FIRE + "/" + enemyX + "/" + enemyY + "/" + OVER);
-//				System.out.println(whoAmI + "/" + TEAM + "/" + FIRE + "/" + enemyX + "/" + enemyY + "/" + myX);
             }
 
             if (o.getObjectDistance() <= 100 && !isRoughlySameDirection(o.getObjectDirection(), getHeading())
@@ -364,18 +359,15 @@ public class Main extends Brain {
         String paramA = Parameters.teamAMainBotBrainClassName;
         String paramB = Parameters.teamBMainBotBrainClassName;
 
-        if (paramA.equals("algorithms.Main")) {
-            // Si paramA vaut "algorithms.Main", alors c'est Team A
+        if (paramA.equals("algorithms.NeuroBotMain")) {
             isTeamA = true;
             System.out.println("Je suis main A ");
             sendLogMessage("paramA = " + paramA + " donc Team A");
-        } else if (paramB.equals("algorithms.Main")) {
+        } else if (paramB.equals("algorithms.NeuroBotMain")) {
             System.out.println("Je suis main B ");
-            // Sinon, si paramB vaut "algorithms.Main", c'est Team B
             isTeamA = false;
             sendLogMessage("paramB = " + paramB + " donc Team B");
         } else {
-            // Si aucune condition n'est satisfaite, vous pouvez définir une valeur par défaut
             isTeamA = true;
             sendLogMessage("Aucune correspondance trouvée, affectation par défaut: Team A");
         }
@@ -451,14 +443,14 @@ public class Main extends Brain {
 
     private void displayMessage() {
         if (whoAmI == ALPHA)
-            sendLogMessage("#ALPHA : (x,y)= (" + (int) myX + ", " + (int) myY + ") theta= " +
-                    (int) (myGetHeading() * 180 / Math.PI) + "°. #State= " + state);
+            sendLogMessage("#ALPHA : (x,y)= (" + (int) myX + ", " + (int) myY + ") , " +
+                    (int) (myGetHeading() * 180 / Math.PI));
         if (whoAmI == BETA)
-            sendLogMessage("#BETA : (x,y)= (" + (int) myX + ", " + (int) myY + ") theta= " +
-                    (int) (myGetHeading() * 180 / Math.PI) + "°. #State= " + state);
+            sendLogMessage("#BETA : (x,y)= (" + (int) myX + ", " + (int) myY + ") ,  " +
+                    (int) (myGetHeading() * 180 / Math.PI));
         if (whoAmI == GAMMA)
-            sendLogMessage("#GAMMA : (x,y)= (" + (int) myX + ", " + (int) myY + ") theta= " +
-                    (int) (myGetHeading() * 180 / Math.PI) + "°. #State= " + state);
+            sendLogMessage("#GAMMA : (x,y)= (" + (int) myX + ", " + (int) myY + ") , " +
+                    (int) (myGetHeading() * 180 / Math.PI));
         if (fireOrder)
             sendLogMessage("Firing enemy at (" + (int) targetX + "," + (int) targetY + ")");
     }
@@ -556,7 +548,6 @@ public class Main extends Brain {
         }
 
         if (myX > 975 && myX < 980 && !(OMBG && OMBB && OMBA)) {
-//			System.out.println("---------------------------------");
             broadcast(whoAmI + "/" + TEAM + "/" + NOT_FIFTH_ELEMENT + "/" + OVER);
         }
         if (detectFront().getObjectType() == IFrontSensorResult.Types.OpponentMainBot) {
@@ -782,7 +773,6 @@ public class Main extends Brain {
         }
 
         if (myX > 2020 && myX < 2025 && !(OMBG && OMBB && OMBA)) {
-//			System.out.println("---------- myx="+myX+" OMBG="+OMBG+" OMBB="+OMBB+" OMBA="+OMBA );
             broadcast(whoAmI + "/" + TEAM + "/" + NOT_FIFTH_ELEMENT + "/" + OVER);
         }
         if (detectFront().getObjectType() == IFrontSensorResult.Types.OpponentMainBot) {
